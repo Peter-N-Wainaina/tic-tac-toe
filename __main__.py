@@ -1,12 +1,47 @@
-import display
-import constants
-import boardLogic
-from moveGenerator import randomMove
+import src.constants as constants
+import src.boardLogic as boardLogic
+from src.constants import AnsiCodes, DisplayMessages,\
+    BoardConstants, SpaceFormatters
+from src.moveGenerator import randomMove
 
 
 
-def printError(message):
-    print(constants.ANSI_RED + message + constants.ANSI_EXIT)
+def displayBoard(board): #TODO: Make it more robust for large n, currently hard-coded to support 3 by 3 board
+    """
+    Prints the given n by n board in the tic-tac-toe board format. 
+    board : An n by n list whose items are either X or O  or a string in 1.. n * n   
+    """
+    assert boardLogic.correctBoard(board),\
+        repr("The board provided  is not valid")
+    
+    row_dash  = BoardConstants.ROW_SEPARATOR * BoardConstants.ROW_SEPARATOR_LENGTH
+    n = len(board)
+    for row in range(n):
+        row_data = ""
+        for col in range(n):
+            if col == 0:  # for formatting first column
+                row_data += " "
+            item = board[row][col]
+
+            if item == BoardConstants.BOARD_ITEM_X:
+                item =  AnsiCodes.ANSI_GREEN + item 
+            elif item ==BoardConstants.BOARD_ITEM_O:
+                item =  AnsiCodes.ANSI_MAGENTA + item
+            row_data += item + AnsiCodes.ANSI_EXIT + AnsiCodes.ANSI_BOLD + AnsiCodes.ANSI_EXIT
+       
+            if col < n-1 :
+                row_data += BoardConstants.COLUMN_SEPARTOR
+        printFormattedMessage(row_data)
+        if row < n-1:
+            printFormattedMessage(row_dash)
+
+
+def printFormattedMessage(message, color = ""):
+    if color == "":
+        exit = ""
+    else:
+        exit = AnsiCodes.ANSI_EXIT
+    print(color+ message + exit)
 
 
 def getPlayerMove(unselected):
@@ -18,39 +53,64 @@ def getPlayerMove(unselected):
 
     unselected: A list of strings of the numbers 1...9
     """
-    move = input(constants.SELECT_MOVE_MESSAGE)
+    move = input( DisplayMessages.SELECT_MOVE_MESSAGE).strip()
     while move not in unselected :
-        printError(constants.INVALID_INPUT_ERROR)
-        move = input(constants.SELECT_MOVE_MESSAGE)
+        printFormattedMessage( DisplayMessages.INVALID_INPUT_ERROR, AnsiCodes.ANSI_RED)
+        move = input( DisplayMessages.SELECT_MOVE_MESSAGE).strip()
     unselected.remove(move)
     return int(move), unselected 
 
 
-def stopPlaying(board):
-    print(constants.NEW_LINE)
-    display.displayBoard(board)
-    print(constants.NEW_LINE)
+def getPlayingSymbols():
+    """
+    Returns a tuple of valid symbols, one that the player would like to use
+    and the other that the computer will use. A valid symbol is either X or O
+
+    Example, if the player selectes X, return value is ("X,"O) else ("O,"X).
+
+    """ 
+    symbol = input( DisplayMessages.SELECT_SYMBOL_MESSAGE).strip().upper()
+    while symbol not in [BoardConstants.BOARD_ITEM_O,BoardConstants.BOARD_ITEM_X]:
+        printFormattedMessage( DisplayMessages.INVALID_INPUT_ERROR,AnsiCodes.ANSI_RED)
+        symbol = input( DisplayMessages.SELECT_SYMBOL_MESSAGE).strip().upper()
+
+    if symbol == BoardConstants.BOARD_ITEM_X:
+        result = (BoardConstants.BOARD_ITEM_X,BoardConstants.BOARD_ITEM_O)
+    else:
+        result =  (BoardConstants.BOARD_ITEM_O,BoardConstants.BOARD_ITEM_X)
+    printFormattedMessage(SpaceFormatters.NEW_LINE)
+    return result
+
+
+def stopPlaying(board): #TODO: A lot going on here, refactor? 
+    printFormattedMessage(SpaceFormatters.NEW_LINE)
+    displayBoard(board)
+    printFormattedMessage(SpaceFormatters.NEW_LINE)
     if  not boardLogic.keepPlaying(board)[0]:
-        print(constants.ANSI_YELLOW + constants.ANSI_BLINK + boardLogic.keepPlaying(board)[1]  + constants.ANSI_EXIT)
+        printFormattedMessage( AnsiCodes.ANSI_BLINK + boardLogic.keepPlaying(board)[1], AnsiCodes.ANSI_YELLOW)
         return True
 
 
 def runGame():
-    board = boardLogic.createBoard(3) #TODO: Hard code to 3 by 3 matrix, but maybe ask user for choice, also for unselected
-    unselected = boardLogic.initialUnselected(3) 
-    display.displayBoard(board)
+    printFormattedMessage( DisplayMessages.WELCOME_MESSAGE,AnsiCodes.ANSI_CYAN)
+    printFormattedMessage(SpaceFormatters.NEW_LINE)
 
+    player_symbol, computer_symbol = getPlayingSymbols() 
+    board = boardLogic.createBoard(BoardConstants.BOARD_SIZE) #TODO: Hard code to 3 by 3 matrix, but maybe ask user for choice, also for unselected
+    unselected = boardLogic.initialUnselected(BoardConstants.BOARD_SIZE) 
+    displayBoard(board)
+
+    printFormattedMessage(SpaceFormatters.NEW_LINE)
     while boardLogic.keepPlaying(board)[0]:
         move, unselected = getPlayerMove(unselected) # initially all positions are unselected
-        board = boardLogic.updateBoard(board, move, constants.BOARD_ITEM_X) #TODO: Hard code item x, but have player choose X or O eventuslly
+        board = boardLogic.updateBoard(board, move, player_symbol) 
         if stopPlaying(board):
             break
         move, unselected = randomMove.pickComputerMove(unselected)
-        board = boardLogic.updateBoard(board, move, constants.BOARD_ITEM_O)
-        print(constants.ANSI_CYAN + f"I choose {move}, your turn" + constants.ANSI_EXIT)
+        board = boardLogic.updateBoard(board, move, computer_symbol)
+        printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
         if  stopPlaying(board):
             break
-
 
 
 if __name__ == '__main__':

@@ -5,7 +5,26 @@ This module contains all functions used for all board operations:
     3.  Winner checking
 """
 
-import constants
+from src.constants import BoardConstants, DisplayMessages
+
+def correctBoard(board):
+    """
+    Returns True if list is an n X n list and all the items are either
+      X , O or a string of ints in 1..n*n. Returns False otherwise.
+    """
+    length = len(board)
+    unselected = []
+    for i in range (length * length): # add all numbers representing all cells uin the grid
+        unselected.append(str(i + 1))
+    unselected = unselected + [BoardConstants.BOARD_ITEM_O,BoardConstants.BOARD_ITEM_X]
+
+    for row in board:
+         if len(row) != length:
+             return False
+         for item in row:
+             if item not in unselected:
+                 return False
+    return True
 
 def createBoard(n):
     """
@@ -83,6 +102,15 @@ def checkDiagional(board,start, offset):
     if diag_win:
         return item
 
+def checkDraw(board):
+    draw = True
+    for row in board:
+        for item in row:
+            if item != BoardConstants.BOARD_ITEM_O and item != BoardConstants.BOARD_ITEM_X:
+                draw =  False 
+    if draw:
+        return DisplayMessages.PLAYERS_DRAW
+
            
 def keepPlaying(board):
     """
@@ -92,28 +120,20 @@ def keepPlaying(board):
             2. PLayer O has won.
             3. The game as ended in a draw.
     """
-
     transposed_board = [[row[i] for row in board] for i in range(len(board[0]))]
     row_win = checkRowWin(board)     #check row win
     col_win = checkRowWin(transposed_board)      #check column win
-    #check diagonals
-    main_diag = checkDiagional(board,(0,0),1)
+    main_diag = checkDiagional(board,(0,0),1)   #check diagonals
     second_diag = checkDiagional(board,(0,len(board)-1),-1)
-
-    if row_win == constants.BOARD_ITEM_O or col_win == constants.BOARD_ITEM_O or \
-        main_diag  == constants.BOARD_ITEM_O or second_diag == constants.BOARD_ITEM_O: 
-        return False, constants.PLAYER_O_WINS
-    elif row_win == constants.BOARD_ITEM_X or col_win == constants.BOARD_ITEM_X or \
-        main_diag == constants.BOARD_ITEM_X or second_diag == constants.BOARD_ITEM_X:
-        return False, constants.PLAYER_X_WINS
-    #check draw
-    draw = True
-    for row in board:
-        for item in row:
-            if item != constants.BOARD_ITEM_O and item != constants.BOARD_ITEM_X:
-                draw =  False 
-    if draw:
-        return False, constants.PLAYERS_DRAW
+    draw = checkDraw(board)     #check draw
+    results = [row_win, col_win, main_diag, second_diag, draw]
+    
+    if BoardConstants.BOARD_ITEM_O in results: 
+        return False, DisplayMessages.PLAYER_O_WINS
+    elif BoardConstants.BOARD_ITEM_X in results:
+        return False, DisplayMessages.PLAYER_X_WINS
+    elif DisplayMessages.PLAYERS_DRAW in results:
+        return False, DisplayMessages.PLAYERS_DRAW
 
     return True,""
 

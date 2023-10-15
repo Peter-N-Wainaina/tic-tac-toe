@@ -5,3 +5,6 @@ Picks a move from the unselected list by following this set of provided heuristi
     3. Take middle position if possible.
     4. Take corner positions over edge positions.
 """
+
+def checkWinningMove(board, unselected):
+    pass 
