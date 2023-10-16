@@ -5,7 +5,7 @@ class BoardConstants():
     COLUMN_SEPARTOR = " | "  # note the spaces before and after |
     BOARD_ITEM_X = "X"
     BOARD_ITEM_O = "O"
-    BOARD_SIZE = 3
+    BOARD_SIZE = 4
 
 
 class SpaceFormatters():

@@ -5,7 +5,10 @@ This module contains all functions used for all board operations:
     3.  Winner checking
 """
 
-from src.constants import BoardConstants, DisplayMessages
+from constants import BoardConstants, DisplayMessages
+import copy
+
+
 
 def correctBoard(board):
     """
@@ -25,6 +28,7 @@ def correctBoard(board):
              if item not in unselected:
                  return False
     return True
+
 
 def createBoard(n):
     """
@@ -55,24 +59,28 @@ def initialUnselected(n):
     return unselected
 
 
-def updateBoard(board, move, cell_data):
+def updateBoard(board, move, symbol):
     """
     Returns a new board with item at position move set to item 
 
     board : An n by n list of strings of the integers in 1..n*n
     move : An int in 1..n*n
-    cell_data: A character, either X or O
+    symbol: A character, either X or O
     """
     n = len(board)
     row = move // n    # Each row contains sorted ints in the range  1..n
     if move % n == 0 :
         row -= 1  
     col = (move + (n -1)) % n  # Each col i contains ints (i+1)+kn with k in 0..n-1
-    board[row][col] = cell_data 
-    return board
+    new_board = copy.deepcopy(board)
+    new_board[row][col] = symbol
+    return new_board
 
 
 def checkRowWin(board):
+   """
+   Returns a symbol X or O if that symbol has a winning row in board, else it returns None.
+   """
    for row in board:
         row_data = row[0]
         row_win = True
@@ -85,8 +93,8 @@ def checkRowWin(board):
         
 def checkDiagional(board,start, offset):
     """
-    Returns the  element at position board[start[0]][start[1]] if all the elements along 
-    diagonal starting at position start along gradient -offset
+    Returns the  symbol X or O, if that symbol wins along the diagonal starting at position start along
+    gradient offset. Otherwise, returns None.
 
     Example: For a 3 by 3 board, with start (0,0) and offset 1, we check the diagonal [(0,0),(1,1),(2,2)]
     """ 
@@ -102,6 +110,16 @@ def checkDiagional(board,start, offset):
     if diag_win:
         return item
 
+
+def checkDiagonals(board):
+    """
+    Returns the  symbol X or O, if that symbol wins along both diagonals in board. Otherwise, returns None.
+    """
+    main_diag = checkDiagional(board,(0,0),1)   #check diagonals
+    second_diag = checkDiagional(board,(0,len(board)-1),-1)
+    return [main_diag, second_diag] 
+
+
 def checkDraw(board):
     draw = True
     for row in board:
@@ -110,6 +128,17 @@ def checkDraw(board):
                 draw =  False 
     if draw:
         return DisplayMessages.PLAYERS_DRAW
+
+
+def checkWin(board):
+    """
+    Returns a list of items each of which is None or a winning board symbol X or O.
+    """
+    transposed_board = [[row[i] for row in board] for i in range(len(board[0]))]
+    row_win = checkRowWin(board)     #check row win
+    col_win = checkRowWin(transposed_board)      #check column win
+    diags =  checkDiagonals(board)
+    return [row_win, col_win]+diags
 
            
 def keepPlaying(board):
@@ -120,13 +149,8 @@ def keepPlaying(board):
             2. PLayer O has won.
             3. The game as ended in a draw.
     """
-    transposed_board = [[row[i] for row in board] for i in range(len(board[0]))]
-    row_win = checkRowWin(board)     #check row win
-    col_win = checkRowWin(transposed_board)      #check column win
-    main_diag = checkDiagional(board,(0,0),1)   #check diagonals
-    second_diag = checkDiagional(board,(0,len(board)-1),-1)
     draw = checkDraw(board)     #check draw
-    results = [row_win, col_win, main_diag, second_diag, draw]
+    results = checkWin(board) + [draw]
     
     if BoardConstants.BOARD_ITEM_O in results: 
         return False, DisplayMessages.PLAYER_O_WINS

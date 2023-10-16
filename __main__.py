@@ -1,8 +1,8 @@
-import src.constants as constants
-import src.boardLogic as boardLogic
-from src.constants import AnsiCodes, DisplayMessages,\
+import boardLogic as boardLogic
+from constants import AnsiCodes, DisplayMessages,\
     BoardConstants, SpaceFormatters
-from src.moveGenerator import randomMove
+import randomMove
+import heuristics
 
 
 
@@ -106,7 +106,8 @@ def runGame():
         board = boardLogic.updateBoard(board, move, player_symbol) 
         if stopPlaying(board):
             break
-        move, unselected = randomMove.pickComputerMove(unselected)
+        #move, unselected = randomMove.pickRandomMove(unselected) #TODO: Make player choose computer strength 
+        move, unselected  = heuristics.pickHeuristicMove(board, unselected, computer_symbol)
         board = boardLogic.updateBoard(board, move, computer_symbol)
         printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
         if  stopPlaying(board):

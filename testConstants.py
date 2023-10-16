@@ -1,0 +1,2 @@
+BOARD_SYMBOL_X = "X"
+BOARD_SYMBOL_O = "O"
