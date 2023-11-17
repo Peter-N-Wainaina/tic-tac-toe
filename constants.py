@@ -1,11 +1,11 @@
 #Board 
 class BoardConstants():
-    ROW_SEPARATOR_LENGTH = 11
+    ROW_SEPARATOR_LENGTH = 11  #TODO: Make this vary with board length
     ROW_SEPARATOR = "-"
     COLUMN_SEPARTOR = " | "  # note the spaces before and after |
     BOARD_ITEM_X = "X"
     BOARD_ITEM_O = "O"
-    BOARD_SIZE = 4
+    BOARD_SIZE = 3
 
 
 class SpaceFormatters():

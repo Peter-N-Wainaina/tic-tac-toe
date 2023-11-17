@@ -3,6 +3,7 @@ from constants import AnsiCodes, DisplayMessages,\
     BoardConstants, SpaceFormatters
 import randomMove
 import heuristics
+import proofOfConcept
 
 
 
@@ -11,6 +12,7 @@ def displayBoard(board): #TODO: Make it more robust for large n, currently hard-
     Prints the given n by n board in the tic-tac-toe board format. 
     board : An n by n list whose items are either X or O  or a string in 1.. n * n   
     """
+    print(board)
     assert boardLogic.correctBoard(board),\
         repr("The board provided  is not valid")
     
@@ -84,10 +86,10 @@ def getPlayingSymbols():
 
 def stopPlaying(board): #TODO: A lot going on here, refactor? 
     printFormattedMessage(SpaceFormatters.NEW_LINE)
-    displayBoard(board)
+    #displayBoard(board)
     printFormattedMessage(SpaceFormatters.NEW_LINE)
     if  not boardLogic.keepPlaying(board)[0]:
-        printFormattedMessage( AnsiCodes.ANSI_BLINK + boardLogic.keepPlaying(board)[1], AnsiCodes.ANSI_YELLOW)
+        printFormattedMessage( AnsiCodes.ANSI_BLINK + boardLogic.keepPlaying(board)[1], AnsiCodes.ANSI_YELLOW) #TODO: Print specific message about winner i.e I win or you win
         return True
 
 
@@ -98,20 +100,32 @@ def runGame():
     player_symbol, computer_symbol = getPlayingSymbols() 
     board = boardLogic.createBoard(BoardConstants.BOARD_SIZE) #TODO: Hard code to 3 by 3 matrix, but maybe ask user for choice, also for unselected
     unselected = boardLogic.initialUnselected(BoardConstants.BOARD_SIZE) 
-    displayBoard(board)
-
     printFormattedMessage(SpaceFormatters.NEW_LINE)
-    while boardLogic.keepPlaying(board)[0]:
-        move, unselected = getPlayerMove(unselected) # initially all positions are unselected
-        board = boardLogic.updateBoard(board, move, player_symbol) 
-        if stopPlaying(board):
-            break
-        #move, unselected = randomMove.pickRandomMove(unselected) #TODO: Make player choose computer strength 
-        move, unselected  = heuristics.pickHeuristicMove(board, unselected, computer_symbol)
-        board = boardLogic.updateBoard(board, move, computer_symbol)
-        printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
-        if  stopPlaying(board):
-            break
+
+    ai_starts = False
+    if not ai_starts:
+        while boardLogic.keepPlaying(board)[0]:
+            move = proofOfConcept.getTestingMove(board,computer_symbol,player_symbol,unselected)
+            unselected.remove(move)
+            board = boardLogic.updateBoard(board, move, computer_symbol)
+            printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
+            displayBoard(board)
+
+            if stopPlaying(board):
+                break
+
+            move, unselected = getPlayerMove(unselected) # initially all positions are unselected
+            board = boardLogic.updateBoard(board, move, player_symbol) 
+
+            #move, unselected = randomMove.pickRandomMove(unselected) #TODO: Make player choose computer strength 
+            #move, unselected  = heuristics.pickHeuristicMove(board, unselected, computer_symbol)
+            #print("unselected",unselected)
+            #print("move",move)
+            # unselected.remove(move)
+            # board = boardLogic.updateBoard(board, move, computer_symbol)
+            # printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
+            if  stopPlaying(board):
+                break
 
 
 if __name__ == '__main__':

@@ -10,7 +10,6 @@ from constants import BoardConstants
 import random
 
 
-
 def pickHeuristicMove(board, unselected, symbol):
     #TODO:assert preconditions
     computer_symbol = symbol

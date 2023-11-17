@@ -12,7 +12,7 @@ import copy
 
 def correctBoard(board):
     """
-    Returns True if list is an n X n list and all the items are either
+    Returns True if board is an n X n list and all the items are either
       X , O or a string of ints in 1..n*n. Returns False otherwise.
     """
     length = len(board)
@@ -67,6 +67,7 @@ def updateBoard(board, move, symbol):
     move : An int in 1..n*n
     symbol: A character, either X or O
     """
+    move = int(move)
     n = len(board)
     row = move // n    # Each row contains sorted ints in the range  1..n
     if move % n == 0 :
@@ -140,6 +141,13 @@ def checkWin(board):
     diags =  checkDiagonals(board)
     return [row_win, col_win]+diags
 
+def hasPlayerWon(board,player):
+    """
+    Returns True if player has won the game in the given board, False otherwise
+
+    Parameter player: Is either X or O
+    """
+    return player in checkWin(board)
            
 def keepPlaying(board):
     """
