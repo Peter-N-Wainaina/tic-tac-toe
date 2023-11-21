@@ -1,0 +1,3 @@
+WIN = 10
+DRAW = 0
+LOSS = -10

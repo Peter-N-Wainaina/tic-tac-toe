@@ -1,6 +1,7 @@
 import boardLogic
 import copy
 import random 
+import time
 
 X = "X"
 O = "O"
@@ -195,7 +196,7 @@ def getTestingMove(board,player,oppo,moves=None):
 def test():
     player1 = X
     player2 = O
-    games = 500
+    games = 10
     games_played = games
     wins = 0
     draws = 0
@@ -241,8 +242,10 @@ def test():
 
 
 
-
-#test()
+start = time.time()
+test()
+end = time.time()
+print(f"This simulation took {end - start} seconds")
 # board = [
 #         ["X","X","3"],
 #         ["O","5","6"],

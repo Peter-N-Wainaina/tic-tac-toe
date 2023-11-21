@@ -103,29 +103,30 @@ def runGame():
     printFormattedMessage(SpaceFormatters.NEW_LINE)
 
     ai_starts = False
-    if not ai_starts:
-        while boardLogic.keepPlaying(board)[0]:
-            move = proofOfConcept.getTestingMove(board,computer_symbol,player_symbol,unselected)
-            unselected.remove(move)
-            board = boardLogic.updateBoard(board, move, computer_symbol)
-            printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
+
+    while boardLogic.keepPlaying(board)[0]:
+        displayBoard(board)
+        move, unselected = getPlayerMove(unselected) # initially all positions are unselected
+        board = boardLogic.updateBoard(board, move, player_symbol) 
+
+        if stopPlaying(board):
+            break
+
+        #move, unselected = randomMove.pickRandomMove(unselected) #TODO: Make player choose computer strength 
+        move, unselected  = heuristics.pickHeuristicMove(board, unselected, computer_symbol)
+        #print("unselected",unselected)
+        #print("move",move)
+        # unselected.remove(move)
+        # board = boardLogic.updateBoard(board, move, computer_symbol)
+        # printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
+        #move = proofOfConcept.getTestingMove(board,computer_symbol,player_symbol,unselected)
+        #unselected.remove(move)
+        board = boardLogic.updateBoard(board, move, computer_symbol)
+        printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
+
+        if  stopPlaying(board):
             displayBoard(board)
-
-            if stopPlaying(board):
-                break
-
-            move, unselected = getPlayerMove(unselected) # initially all positions are unselected
-            board = boardLogic.updateBoard(board, move, player_symbol) 
-
-            #move, unselected = randomMove.pickRandomMove(unselected) #TODO: Make player choose computer strength 
-            #move, unselected  = heuristics.pickHeuristicMove(board, unselected, computer_symbol)
-            #print("unselected",unselected)
-            #print("move",move)
-            # unselected.remove(move)
-            # board = boardLogic.updateBoard(board, move, computer_symbol)
-            # printFormattedMessage(f"I choose {move}, your turn" , AnsiCodes.ANSI_CYAN)
-            if  stopPlaying(board):
-                break
+            break
 
 
 if __name__ == '__main__':
