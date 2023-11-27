@@ -3,6 +3,7 @@ Test cases for all tictactoe classes
 """
 import player
 from  board import Board
+from game import Game
 import time
 def testPlayer():
     """
@@ -166,27 +167,19 @@ def simulateGames():
                 wins += 1
         games_played -= 1
     print(f"{wins} wins out of {games} games, so win rate is : {wins/games * 100} percent so there are {draws} draws")
-
-
-
-
-
     
-
-
-
-
-
-
-    
-
-    
-
+def testGame():
+    print("Testing the Game class")
+    g1 = Game(3)
+    g1.startGame()
+    pass
 
 testPlayer()
 testBoard()
+testGame()
 # start_time = time.time()
 # simulateGames()
 # end_time = time.time()
 # print(f"The simulation took {end_time - start_time} seconds to run ")
+
 print("All test cases passed")

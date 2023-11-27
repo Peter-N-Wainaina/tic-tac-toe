@@ -1,8 +1,7 @@
 """
 The classes in this module model  tictactoe players.
 """
-from  board import *
-import game
+from  board import Board, isValidPosition
 from random import randint
 from consts import *
 
@@ -49,7 +48,38 @@ class Player(object):
         col = (move + (dim -1)) % dim
         return (row,col)
 
-        
+    def chooseMove(self,board,oppo):
+        """
+        Returns an (int,int) tuple of the move the human player has chosen.
+
+        Gets a valid terminal input from the user, and int indicating the position
+        they want to move to, and converts this to the indices on the board. For 
+        example, 5 in a 3 by 3 board should be (1,1). Note that the move must be 
+        an empty position on the board. 
+        """
+        assert isinstance(board,Board)
+        dim = board.getDimension()
+        moves = board.possibleMoves()
+        done = False
+        while not done:
+            move = input(SELECT_MOVE_MESSAGE).strip()
+            try:
+                move = int(move)
+                row = move // dim    # Each row contains sorted ints in the range  1..n
+                if move % dim == 0 :
+                    row -= 1  
+                col = (move + (dim -1)) % dim
+                if (row,col) in moves:
+                    done = True
+                    return (row,col)
+                else:
+                    raise MoveUnavailableError
+            except ValueError:
+                print(INVALID_TYPE_ERROR)
+            except MoveUnavailableError:
+                print(UNAVAILABLE_MOVE) 
+
+
 class AIPlayer(Player):
     """
     Represents the AI player and uses minimax to choose the best move
@@ -103,7 +133,9 @@ class AIPlayer(Player):
         """
         Returns one of the item in items at random
         """
-        return items[randint(0,len(items) - 1)]
+
+        index = randint(0,len(items) - 1)
+        return items[index]
 
     def _getBestMove(self,scores,board):
         """
@@ -113,12 +145,12 @@ class AIPlayer(Player):
         Precondition: moves is an (int,int):int dictionary
         """
         assert isinstance(board,Board)
-        max_score = [move for move,score in scores.items() \
+        max_scores = [move for move,score in scores.items() \
                      if score == max(scores.values())]    #get highest scores
         centers = board.getCenterPieces()
-        high_centers = [center for center in centers if center in max_score ]
+        high_centers = [center for center in centers if center in max_scores ]
         return self._getRandom(high_centers) if high_centers != [] else\
-                self._getRandom(max_score)
+                self._getRandom(max_scores)
 
     def chooseMove(self,board,opponent):
         """
@@ -131,3 +163,9 @@ class AIPlayer(Player):
         pos_moves = board.possibleMoves()
         scores = self._scoreMoves(pos_moves,opponent,board)
         return self._getBestMove(scores,board)
+
+
+class MoveUnavailableError(Exception):
+    """
+    Error raised when Player chooses a move that is unavailable
+    """
