@@ -242,10 +242,10 @@ def test():
 
 
 
-start = time.time()
-test()
-end = time.time()
-print(f"This simulation took {end - start} seconds")
+# start = time.time()
+# test()
+# end = time.time()
+# print(f"This simulation took {end - start} seconds")
 # board = [
 #         ["X","X","3"],
 #         ["O","5","6"],

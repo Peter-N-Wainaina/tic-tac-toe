@@ -5,14 +5,11 @@ class BoardConstants():
     COLUMN_SEPARTOR = " | "  # note the spaces before and after |
     BOARD_ITEM_X = "X"
     BOARD_ITEM_O = "O"
-    BOARD_SIZE = 5
-    
-
+    BOARD_SIZE = 3
 
 class SpaceFormatters():
     NEW_LINE = "\n"
     TAB = "\t"
-
 
 class DisplayMessages():
     SELECT_MOVE_MESSAGE = "Choose position from one of the numbers: "
@@ -22,7 +19,6 @@ class DisplayMessages():
     PLAYER_X_WINS = "Player X Wins"
     PLAYER_O_WINS = "Player O Wins"
     PLAYERS_DRAW = "We draw :)"
-
 
 #Ansi codes
 class AnsiCodes():
