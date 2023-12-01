@@ -7,6 +7,8 @@ This is a command-line implementation of the classic Tic Tac Toe game, utilizing
 ### Prerequisites
 
 - Python 3.x installed
+- Must support ANSI codes for now.
+  
 
 ### Running the Game
 
@@ -33,6 +35,7 @@ The Minimax algorithm is a key concept in artificial intelligence, particularly 
 
 ## Future Improvements
 
+- Enabling users to specify whether their terminal support ANSI codes.
 - Implementing a graphical interface for a more user-friendly experience.
 - Enhancing the AI's capabilities to support bigger boards.
 - Adding more customization options for the players.
