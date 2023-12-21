@@ -21,10 +21,10 @@ This is a command-line implementation of the classic Tic Tac Toe game, utilizing
 2. Run the game:
 
    ```bash
-   python tictactoe
+   python tictactoe [board size]
    ```
 
-Follow the prompts to play the game.
+Board size is optional and defaults to a 3 by 3 board. Follow the prompts to play the game.
 
 ## About
 
@@ -39,8 +39,6 @@ The Minimax algorithm is a key concept in artificial intelligence, particularly 
 - Implementing a graphical interface for a more user-friendly experience.
 - Enhancing the AI's capabilities to support bigger boards.
 - Adding more customization options for the players.
-  
-  - Allowing players to pass in board params via command line.
   - Allow 2 human players.
   
 ## Contributions
